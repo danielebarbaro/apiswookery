@@ -3,5 +3,5 @@
 test('inspire command', function () {
     $this->artisan('inspire')
       // ->expectsOutput('')
-         ->assertExitCode(0);
+        ->assertExitCode(0);
 });
