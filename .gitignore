@@ -3,3 +3,20 @@
 /.vscode
 /.vagrant
 .phpunit.result.cache
+.php-cs-fixer.cache
+phpunit.xml
+phpstan.neon
+*.cache
+*.log
+builds/*
+!builds/.gitignore
+
+# Do not collect servers
+openswoole-server.php
+openswoole-server.php.bak
+openswoole-server-test.php
+
+# Do not collect openapi files
+openapi.yml
+openapi.yaml
+openapi.json
