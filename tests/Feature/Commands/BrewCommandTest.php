@@ -1,7 +1,7 @@
 <?php
 
-test('inspire command', function () {
-    $this->artisan('inspire')
-      // ->expectsOutput('')
-        ->assertExitCode(0);
-});
+//test('brew command', function () {
+//    $this->artisan('brew')
+//      // ->expectsOutput('')
+//        ->assertExitCode(0);
+//});
