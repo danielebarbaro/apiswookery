@@ -1,0 +1,42 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Test Pet Store",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/pet": {
+            "post": {
+                "summary": "Add a pet",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a pet",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Pet": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

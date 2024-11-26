@@ -1,0 +1,11 @@
+openapi: 3.0.2
+info:
+    title: Invalid YAML
+    version: 1.0.0
+paths:
+    /pet:
+        post
+        summary: Invalid YAML structure
+        responses:
+            '200':
+                description: OK
