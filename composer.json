@@ -14,13 +14,14 @@
     "require": {
         "php": "^8.3",
         "ext-openswoole": "*",
+        "cebe/php-openapi": "dev-master",
         "fakerphp/faker": "^1.24",
         "laravel-zero/framework": "^11.0.2",
         "nette/php-generator": "*",
         "nikic/php-parser": "^5.3",
         "psr/log": "^3.0",
-        "symfony/validator": "^7.1",
-        "symfony/yaml": "^7.1"
+        "symfony/validator": "^v7.0",
+        "symfony/yaml": "^v7.0"
     },
     "require-dev": {
         "laravel/pint": "^1.18.1",
