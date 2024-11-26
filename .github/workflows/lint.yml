@@ -1,4 +1,4 @@
-name: Fix Code Style
+name: Fix Code Style with Pint
 
 on: [ push ]
 
@@ -30,4 +30,4 @@ jobs:
       - name: Commit linted files
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "🎨Fixes coding style with Pint"
+          commit_message: "chore: fix coding style issues with Pint 🤖"

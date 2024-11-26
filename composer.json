@@ -51,6 +51,6 @@
     "bin": ["apiswookery"],
     "scripts": {
         "test": "pest",
-        "format": "pint"
+        "lint": "pint"
     }
 }
