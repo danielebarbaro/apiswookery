@@ -16,7 +16,7 @@ readonly class SpecificationReader
 
     public function read(string $path): OpenApi
     {
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             throw new RuntimeException("OpenAPI specification file not found: {$path}");
         }
 
@@ -31,11 +31,11 @@ readonly class SpecificationReader
 
     public function validate(OpenApi $openApi): bool
     {
-        if (!$openApi->validate()) {
+        if (! $openApi->validate()) {
             $errors = $openApi->getErrors();
             throw new RuntimeException(
-                "Invalid OpenAPI specification:\n" . implode("\n", array_map(
-                    fn($error) => "- {$error}",
+                "Invalid OpenAPI specification:\n".implode("\n", array_map(
+                    fn ($error) => "- {$error}",
                     $errors
                 ))
             );

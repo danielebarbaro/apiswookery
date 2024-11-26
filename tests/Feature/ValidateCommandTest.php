@@ -1,12 +1,12 @@
 <?php
 
 beforeEach(function () {
-    $this->fixturesPath = dirname(__DIR__, ).'/Fixtures';
+    $this->fixturesPath = dirname(__DIR__).'/Fixtures';
 });
 
 it('validates correct specification', function () {
     $this->artisan('validate', [
-        'spec' => "{$this->fixturesPath}/valid-petstore.yaml"
+        'spec' => "{$this->fixturesPath}/valid-petstore.yaml",
     ])
         ->expectsOutput('🔍 Validating your magical scroll...')
         ->expectsOutput('✨ Your magical scroll OpenAPI specification is valid!')
@@ -18,13 +18,13 @@ it('fails for non existent file', function () {
 
     $this->artisan('validate', ['spec' => $nonExistentPath])
         ->expectsOutput('🔍 Validating your magical scroll...')
-        ->expectsOutput('🌋 The magical scroll does not exist: ' . $nonExistentPath)
+        ->expectsOutput('🌋 The magical scroll does not exist: '.$nonExistentPath)
         ->assertExitCode(1);
 });
 
 it('fails for invalid yaml', function () {
     $this->artisan('validate', [
-        'spec' => "{$this->fixturesPath}/invalid-yaml.yaml"
+        'spec' => "{$this->fixturesPath}/invalid-yaml.yaml",
     ])
         ->expectsOutput('🔍 Validating your magical scroll...')
         ->expectsOutput('🌋 Your magical scroll has some imperfections:')
@@ -33,7 +33,7 @@ it('fails for invalid yaml', function () {
 
 it('shows summary for valid specification', function () {
     $this->artisan('validate', [
-        'spec' => "{$this->fixturesPath}/valid-petstore.yaml"
+        'spec' => "{$this->fixturesPath}/valid-petstore.yaml",
     ])
         ->expectsOutput('📖 Specification Summary:')
         ->expectsOutput('🛣️  Available Paths:')
@@ -47,7 +47,7 @@ it('loads custom config when provided', function () {
 
     $this->artisan('validate', [
         'spec' => "{$this->fixturesPath}/valid-petstore.yaml",
-        '--config' => $configPath
+        '--config' => $configPath,
     ])->assertExitCode(0);
 
     unlink($configPath);

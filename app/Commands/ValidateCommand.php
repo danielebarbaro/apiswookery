@@ -5,7 +5,6 @@ namespace App\Commands;
 use App\Config\ApiSwookeryConfig;
 use App\OpenApi\SpecificationReader;
 use cebe\openapi\spec\OpenApi;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
 use RuntimeException;
@@ -29,7 +28,7 @@ class ValidateCommand extends Command
             $reader = new SpecificationReader($config);
 
             $specPath = $this->argument('spec');
-            if (!$this->validateFile($specPath)) {
+            if (! $this->validateFile($specPath)) {
                 return self::FAILURE;
             }
 
@@ -74,13 +73,13 @@ class ValidateCommand extends Command
 
     private function validateFile(string $path): bool
     {
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             $this->error('🌋 The magical scroll does not exist: '.$path);
 
             return false;
         }
 
-        if (!is_readable($path)) {
+        if (! is_readable($path)) {
             $this->error('🌋 Cannot read the magical scroll: '.$path);
 
             return false;
@@ -96,8 +95,9 @@ class ValidateCommand extends Command
         $this->newLine();
         $this->line('📖 Specification Summary:');
 
-        if (!isset($openapi->paths)) {
+        if (! isset($openapi->paths)) {
             $this->line('No paths available in the specification.');
+
             return;
         }
 
@@ -107,7 +107,7 @@ class ValidateCommand extends Command
         foreach ($openapi->paths as $path => $pathItem) {
             $methods = array_filter(
                 array_map(
-                    fn($operation) => isset($pathItem->{$operation}) ? strtoupper($operation) : null,
+                    fn ($operation) => isset($pathItem->{$operation}) ? strtoupper($operation) : null,
                     $availableOperations
                 )
             );

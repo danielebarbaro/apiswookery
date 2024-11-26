@@ -6,7 +6,7 @@ use cebe\openapi\spec\OpenApi;
 
 beforeEach(function () {
     $this->reader = new SpecificationReader(ApiSwookeryConfig::defaults());
-    $this->fixturesPath = __DIR__ .'/../Fixtures';
+    $this->fixturesPath = __DIR__.'/../Fixtures';
 });
 
 it('can read valid yaml specification', function () {
