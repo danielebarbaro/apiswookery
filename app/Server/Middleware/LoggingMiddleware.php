@@ -2,10 +2,10 @@
 
 namespace App\Server\Middleware;
 
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use OpenSwoole\HTTP\Request;
 use OpenSwoole\HTTP\Response;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LoggingMiddleware implements MiddlewareInterface
 {

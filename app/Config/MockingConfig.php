@@ -28,13 +28,13 @@ readonly class MockingConfig
     {
         return new self(
             defaults: $config['defaults'] ?? [
-            'string' => 'dummy-string',
-            'number' => 42,
-            'integer' => 1,
-            'boolean' => true,
-            'array' => [],
-            'object' => [],
-        ],
+                'string' => 'dummy-string',
+                'number' => 42,
+                'integer' => 1,
+                'boolean' => true,
+                'array' => [],
+                'object' => [],
+            ],
             generationPriority: $config['generation_priority'] ?? ['example', 'examples', 'schema'],
             supportedFormats: $config['supported_formats'] ?? ['json']
         );

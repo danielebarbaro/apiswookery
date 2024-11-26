@@ -5,7 +5,7 @@ namespace Tests\Unit\Config;
 use App\Config\MockingConfig;
 
 test('MockingConfig has correct defaults', function () {
-    $config = new MockingConfig();
+    $config = new MockingConfig;
 
     expect($config->defaults)->toBe([
         'string' => 'dummy-string',

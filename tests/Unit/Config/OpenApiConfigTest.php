@@ -3,10 +3,9 @@
 namespace Tests\Unit\Config;
 
 use App\Config\OpenApiConfig;
-use InvalidArgumentException;
 
 test('OpenApiConfig has correct defaults', function () {
-    $config = new OpenApiConfig();
+    $config = new OpenApiConfig;
 
     expect($config->version)->toBe('3.0');
 });
@@ -26,4 +25,3 @@ test('OpenApiConfig can be converted to array', function () {
         'version' => '3.0.0',
     ]);
 });
-
