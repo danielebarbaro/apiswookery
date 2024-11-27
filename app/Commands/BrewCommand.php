@@ -9,7 +9,6 @@ use App\Generators\ServerGenerator;
 use App\OpenApi\SpecificationReader;
 use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class BrewCommand extends Command

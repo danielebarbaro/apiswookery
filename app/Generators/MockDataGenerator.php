@@ -30,20 +30,11 @@ class MockDataGenerator
 
     private function generateFromSchema(Schema $schema): mixed
     {
-        // Usa esempio se presente
         if (isset($schema->example)) {
             return $schema->example;
         }
 
-        return match ($schema->type) {
-            'object' => $this->generateObject($schema),
-            'array' => $this->generateArray($schema),
-            'string' => $this->generateString($schema),
-            'integer' => $this->generateInteger($schema),
-            'number' => $this->generateNumber($schema),
-            'boolean' => $this->generateBoolean($schema),
-            default => null,
-        };
+        return $this->generateByType($schema->type, $schema);
     }
 
     private function generateFromArray(array $schema): mixed
@@ -52,165 +43,95 @@ class MockDataGenerator
             return $schema['example'];
         }
 
-        return match ($schema['type'] ?? 'object') {
-            'string' => $this->generateStringFromArray($schema),
-            'number' => $this->generateNumberFromArray($schema),
-            'integer' => $this->generateIntegerFromArray($schema),
-            'boolean' => $this->generateBooleanFromArray($schema),
-            'array' => $this->generateArrayFromArray($schema),
-            'object' => $this->generateObjectFromArray($schema),
+        return $this->generateByType($schema['type'] ?? 'object', $schema);
+    }
+
+    private function generateByType(string $type, array|Schema $schema): mixed
+    {
+        return match ($type) {
+            'object' => $this->generateObject($schema),
+            'array' => $this->generateArray($schema),
+            'string' => $this->generateString($schema),
+            'integer' => $this->generateInteger($schema),
+            'number' => $this->generateNumber($schema),
+            'boolean' => $this->generateBoolean(),
             default => null,
         };
     }
 
-    private function generateObject(Schema $schema): array
+    private function generateObject(array|Schema $schema): array
     {
-        if (!isset($schema->properties)) {
+        $properties = $schema instanceof Schema ? $schema->properties : $schema['properties'] ?? [];
+        if (empty($properties)) {
             return [];
         }
 
         $result = [];
-        foreach ($schema->properties as $propertyName => $propertySchema) {
-            if ($propertySchema instanceof Schema) {
-                if (in_array($propertyName, $schema->required ?? [], true) || $this->faker->boolean(80)) {
-                    $result[$propertyName] = $this->generate($propertySchema);
-                }
-            }
-        }
+        foreach ($properties as $propertyName => $propertySchema) {
+            $isRequired = $schema instanceof Schema
+                ? in_array($propertyName, $schema->required ?? [], true)
+                : in_array($propertyName, $schema['required'] ?? [], true);
 
-        return $result;
-    }
-
-    private function generateArray(Schema $schema): array
-    {
-        if (!isset($schema->items)) {
-            return [];
-        }
-
-        $minItems = $schema->minItems ?? 1;
-        $maxItems = $schema->maxItems ?? 5;
-        $count = $this->faker->numberBetween($minItems, $maxItems);
-
-        return array_map(
-            fn() => $this->generate($schema->items),
-            range(1, $count)
-        );
-    }
-
-    private function generateString(Schema $schema): string
-    {
-        if (isset($schema->enum)) {
-            return $this->faker->randomElement($schema->enum);
-        }
-
-        return match ($schema->format ?? '') {
-            'date-time' => $this->faker->dateTime->format(DATE_ATOM),
-            'date' => $this->faker->date(),
-            'email' => $this->faker->email(),
-            'uri' => $this->faker->url(),
-            'hostname' => $this->faker->domainName(),
-            'ipv4' => $this->faker->ipv4(),
-            'ipv6' => $this->faker->ipv6(),
-            default => $this->faker->sentence(),
-        };
-    }
-
-    private function generateInteger(Schema $schema): int
-    {
-        $minimum = $schema->minimum ?? PHP_INT_MIN;
-        $maximum = $schema->maximum ?? PHP_INT_MAX;
-
-        return match ($schema->format ?? '') {
-            'int64' => $this->faker->numberBetween((int)$minimum, (int)$maximum),
-            default => $this->faker->numberBetween((int)$minimum, (int)$maximum),
-        };
-    }
-
-    private function generateNumber(Schema $schema): float
-    {
-        $minimum = $schema->minimum ?? PHP_FLOAT_MIN;
-        $maximum = $schema->maximum ?? PHP_FLOAT_MAX;
-
-        return $this->faker->randomFloat(2, (float)$minimum, (float)$maximum);
-    }
-
-    private function generateBoolean(Schema $schema): bool
-    {
-        return $this->faker->boolean();
-    }
-
-    // Metodi per la generazione da array (mantenuti per retrocompatibilità)
-    private function generateStringFromArray(array $schema): string
-    {
-        if (isset($schema['enum'])) {
-            return $this->faker->randomElement($schema['enum']);
-        }
-
-        return match ($schema['format'] ?? '') {
-            'date-time' => $this->faker->dateTime->format(DATE_ATOM),
-            'date' => $this->faker->date(),
-            'email' => $this->faker->email(),
-            'uri' => $this->faker->url(),
-            'hostname' => $this->faker->domainName(),
-            'ipv4' => $this->faker->ipv4(),
-            'ipv6' => $this->faker->ipv6(),
-            default => $this->faker->sentence(),
-        };
-    }
-
-    private function generateNumberFromArray(array $schema): float
-    {
-        $minimum = $schema['minimum'] ?? PHP_FLOAT_MIN;
-        $maximum = $schema['maximum'] ?? PHP_FLOAT_MAX;
-
-        return $this->faker->randomFloat(2, (float)$minimum, (float)$maximum);
-    }
-
-    private function generateIntegerFromArray(array $schema): int
-    {
-        $minimum = $schema['minimum'] ?? PHP_INT_MIN;
-        $maximum = $schema['maximum'] ?? PHP_INT_MAX;
-
-        return $this->faker->numberBetween((int)$minimum, (int)$maximum);
-    }
-
-    private function generateBooleanFromArray(array $schema): bool
-    {
-        return $this->faker->boolean();
-    }
-
-    private function generateArrayFromArray(array $schema): array
-    {
-        if (!isset($schema['items'])) {
-            return [];
-        }
-
-        $minItems = $schema['minItems'] ?? 1;
-        $maxItems = $schema['maxItems'] ?? 5;
-        $count = $this->faker->numberBetween($minItems, $maxItems);
-
-        return array_map(
-            fn() => $this->generate($schema['items']),
-            range(1, $count)
-        );
-    }
-
-    private function generateObjectFromArray(array $schema): array
-    {
-        if (!isset($schema['properties'])) {
-            return [];
-        }
-
-        $result = [];
-        foreach ($schema['properties'] as $propertyName => $propertySchema) {
-            if (
-                in_array($propertyName, $schema['required'] ?? [], true) ||
-                $this->faker->boolean(80)
-            ) {
+            if ($isRequired || $this->faker->boolean(80)) {
                 $result[$propertyName] = $this->generate($propertySchema);
             }
         }
 
         return $result;
+    }
+
+    private function generateArray(array|Schema $schema): array
+    {
+        $items = $schema instanceof Schema ? $schema->items : $schema['items'] ?? null;
+        if (!$items) {
+            return [];
+        }
+
+        $minItems = $schema instanceof Schema ? $schema->minItems ?? 1 : $schema['minItems'] ?? 1;
+        $maxItems = $schema instanceof Schema ? $schema->maxItems ?? 5 : $schema['maxItems'] ?? 5;
+        $count = $this->faker->numberBetween($minItems, $maxItems);
+
+        return array_map(fn () => $this->generate($items), range(1, $count));
+    }
+
+    private function generateString(array|Schema $schema): string
+    {
+        $enum = $schema instanceof Schema ? $schema->enum : $schema['enum'] ?? null;
+        if ($enum) {
+            return $this->faker->randomElement($enum);
+        }
+
+        $format = $schema instanceof Schema ? $schema->format : $schema['format'] ?? '';
+        return match ($format) {
+            'date-time' => $this->faker->dateTime->format(DATE_ATOM),
+            'date' => $this->faker->date(),
+            'email' => $this->faker->email(),
+            'uri' => $this->faker->url(),
+            'hostname' => $this->faker->domainName(),
+            'ipv4' => $this->faker->ipv4(),
+            'ipv6' => $this->faker->ipv6(),
+            default => $this->faker->sentence(),
+        };
+    }
+
+    private function generateInteger(array|Schema $schema): int
+    {
+        $minimum = $schema instanceof Schema ? $schema->minimum ?? PHP_INT_MIN : $schema['minimum'] ?? PHP_INT_MIN;
+        $maximum = $schema instanceof Schema ? $schema->maximum ?? PHP_INT_MAX : $schema['maximum'] ?? PHP_INT_MAX;
+
+        return $this->faker->numberBetween((int) $minimum, (int) $maximum);
+    }
+
+    private function generateNumber(array|Schema $schema): float
+    {
+        $minimum = $schema instanceof Schema ? $schema->minimum ?? PHP_FLOAT_MIN : $schema['minimum'] ?? PHP_FLOAT_MIN;
+        $maximum = $schema instanceof Schema ? $schema->maximum ?? PHP_FLOAT_MAX : $schema['maximum'] ?? PHP_FLOAT_MAX;
+
+        return $this->faker->randomFloat(2, (float) $minimum, (float) $maximum);
+    }
+
+    private function generateBoolean(): bool
+    {
+        return $this->faker->boolean();
     }
 }

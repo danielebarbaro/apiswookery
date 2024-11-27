@@ -22,11 +22,11 @@ readonly class SpecificationReader
         }
 
         // $content = File::get($path);
-        $absolutePath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . $path;
+        $absolutePath = dirname(__DIR__, 2).DIRECTORY_SEPARATOR.$path;
 
         // ALL: resolve all references, which will result in a large description with a lot of repetitions
         // but no references (except if there are recursive references, these will stop at some level)
-         $mode = ReferenceContext::RESOLVE_MODE_ALL;
+        $mode = ReferenceContext::RESOLVE_MODE_ALL;
 
         // INLINE: only references to external files are resolved, references to places in the current file
         // are still Reference objects.
