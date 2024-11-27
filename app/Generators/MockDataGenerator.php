@@ -83,7 +83,7 @@ class MockDataGenerator
     private function generateArray(array|Schema $schema): array
     {
         $items = $schema instanceof Schema ? $schema->items : $schema['items'] ?? null;
-        if (!$items) {
+        if (! $items) {
             return [];
         }
 
@@ -102,6 +102,7 @@ class MockDataGenerator
         }
 
         $format = $schema instanceof Schema ? $schema->format : $schema['format'] ?? '';
+
         return match ($format) {
             'date-time' => $this->faker->dateTime->format(DATE_ATOM),
             'date' => $this->faker->date(),

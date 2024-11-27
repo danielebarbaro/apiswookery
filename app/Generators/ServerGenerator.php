@@ -163,7 +163,7 @@ PHP;
         $workers = (int) $this->config->server->workers;
 
         $constructor->setBody(
-<<<'BODY'
+            <<<'BODY'
 $this->host = $host;
 $this->port = $port;
 $this->workers = $workers;
