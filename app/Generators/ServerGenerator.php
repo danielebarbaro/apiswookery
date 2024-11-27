@@ -42,22 +42,21 @@ class ServerGenerator
     private function generateStartupCode(OpenApi $spec): string
     {
         $endpoints = $this->generateEndpointsList($spec);
+        $workers = (int) $this->config->server->workers;
+        $host = new Literal((string) $this->config->server->host);
+        $port = (int) $this->config->server->port;
 
         return <<<PHP
-
-\$host = \$argv[1] ?? '127.0.0.1';
-\$port = (int)(\$argv[2] ?? 9501);
-
 echo sprintf("\n🚀 OpenSwoole Mock Server v%s\n", OPENSWOOLE_VERSION);
 
-echo sprintf("Server running at http://%s:%d\n\n", \$host, \$port);
+echo sprintf("Server running at http://%s:%d\n\n", '{$host}', {$port});
 
 echo "Available endpoints:\n";
 {$endpoints}
 
-echo "  - GET /health\n\n";
+echo "  - [GET] | /health\n\n";
 
-\$server = new OpenSwooleServer(\$host, \$port);
+\$server = new OpenSwooleServer('{$host}', {$port}, {$workers});
 \$server->run();
 
 PHP;
@@ -130,6 +129,10 @@ PHP;
         $class->addProperty('port')
             ->setPrivate()
             ->setType('int');
+
+        $class->addProperty('workers')
+            ->setPrivate()
+            ->setType('int');
         // TODO
         //        $class->addProperty('logger')
         //            ->setPrivate()
@@ -144,22 +147,28 @@ PHP;
         $constructor->addParameter('port')
             ->setType('int');
 
+        $constructor->addParameter('workers')
+            ->setType('int');
+
         // TODO
         //        $constructor->addParameter('logger')
         //            ->setType('Psr\\Log\\LoggerInterface')
         //            ->setNullable()
         //            ->setDefaultValue(null);
 
-        $workerNum = new Literal((string) $this->config->server->workers);
+        $workers = (int) $this->config->server->workers;
+        $host = new Literal((string) $this->config->server->host);
+        $port = (int) $this->config->server->port;
 
         $constructor->setBody(
             '$this->host = $host;
 $this->port = $port;
+$this->workers = $workers;
 // $this->logger = $logger ?? new NullLogger();
 
 $this->server = new Server($this->host, $this->port);
 $this->server->set([
-    \'worker_num\' => '.$workerNum.'
+    \'worker_num\' => $this->workers
 ]);
 
 $this->server->on(\'request\', [$this, \'handleRequest\']);'
@@ -250,7 +259,7 @@ try {
             ->setType('OpenSwoole\\Http\\Request');
 
         $handler->addParameter('response')
-            ->setType('OpenSwoole\Http\Response');
+            ->setType('OpenSwoole\\Http\\Response');
 
         $responseCases = $this->generateResponseCases($operation);
 

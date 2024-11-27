@@ -67,6 +67,8 @@ class BrewCommand extends Command
                 ['Property', 'Value'],
                 [
                     ['Server', $config->server->host.':'.$config->server->port],
+//                    ['Host', $config->server->host],
+//                    ['Port', $config->server->port],
                     ['Workers', $config->server->workers],
                     ['Output', $outputPath],
                 ]
