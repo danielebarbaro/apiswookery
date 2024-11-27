@@ -9,6 +9,7 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\PathItem;
 use cebe\openapi\spec\Response;
+use cebe\openapi\spec\Schema;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PhpFile;
@@ -156,9 +157,9 @@ PHP;
         //            ->setNullable()
         //            ->setDefaultValue(null);
 
-        $workers = (int) $this->config->server->workers;
         $host = new Literal((string) $this->config->server->host);
         $port = (int) $this->config->server->port;
+        $workers = (int) $this->config->server->workers;
 
         $constructor->setBody(
             '$this->host = $host;
@@ -298,15 +299,20 @@ $response->end(json_encode($responseData));'
                 continue;
             }
 
-            $schemaArray = json_decode(json_encode($schema), true);
+            $schema = $response->content['application/json']->schema ?? null;
+            if (!($schema instanceof Schema)) {
+                continue;
+            }
 
-            return var_export([
-                'data' => $this->mockGenerator->generate($schemaArray),
+            $mockData = $this->mockGenerator->generate($schema);
+
+            $cases[] = var_export([
+                'data' => $mockData,
                 'code' => (int) $code,
             ], true);
         }
 
-        return var_export(['data' => null, 'code' => 204], true);
+        return !empty($cases) ? implode(PHP_EOL, $cases) : var_export(['data' => null, 'code' => 204], true);
     }
 
     private function addUtilityMethods(ClassType $class): void
