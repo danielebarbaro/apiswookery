@@ -1,34 +1,67 @@
-<p align="center">
-    <img title="Laravel Zero" height="100" src="https://raw.githubusercontent.com/laravel-zero/docs/master/images/logo/laravel-zero-readme.png" alt="Laravel Zero Logo" />
-</p>
+# ApiSwookery 🧙‍♂️
 
-<p align="center">
-  <a href="https://github.com/laravel-zero/framework/actions"><img src="https://github.com/laravel-zero/laravel-zero/actions/workflows/tests.yml/badge.svg" alt="Build Status" /></a>
-  <a href="https://packagist.org/packages/laravel-zero/framework"><img src="https://img.shields.io/packagist/dt/laravel-zero/framework.svg" alt="Total Downloads" /></a>
-  <a href="https://packagist.org/packages/laravel-zero/framework"><img src="https://img.shields.io/packagist/v/laravel-zero/framework.svg?label=stable" alt="Latest Stable Version" /></a>
-  <a href="https://packagist.org/packages/laravel-zero/framework"><img src="https://img.shields.io/packagist/l/laravel-zero/framework.svg" alt="License" /></a>
-</p>
+ApiSwookery is a magical tool that brews mock servers from your OpenAPI specifications. It's designed to simplify API development and testing by providing a realistic mock server that adheres to your API definition.
 
-Laravel Zero was created by [Nuno Maduro](https://github.com/nunomaduro) and [Owen Voke](https://github.com/owenvoke), and is a micro-framework that provides an elegant starting point for your console application. It is an **unofficial** and customized version of Laravel optimized for building command-line applications.
+## Features 🌟
 
-- Built on top of the [Laravel](https://laravel.com) components.
-- Optional installation of Laravel [Eloquent](https://laravel-zero.com/docs/database/), Laravel [Logging](https://laravel-zero.com/docs/logging/) and many others.
-- Supports interactive [menus](https://laravel-zero.com/docs/build-interactive-menus/) and [desktop notifications](https://laravel-zero.com/docs/send-desktop-notifications/) on Linux, Windows & MacOS.
-- Ships with a [Scheduler](https://laravel-zero.com/docs/task-scheduling/) and  a [Standalone Compiler](https://laravel-zero.com/docs/build-a-standalone-application/).
-- Integration with [Collision](https://github.com/nunomaduro/collision) - Beautiful error reporting
+- Generate a fully functional mock server from your OpenAPI (formerly Swagger) specification
+- Supports OpenAPI 3.0 and above
+- Generate realistic mock data based on your schema definitions
+- Highly configurable through command-line options and configuration files
+- Supports middleware options for logging
 
-------
+## Installation 📦
 
-## Documentation
+You can install ApiSwookery via Composer:
 
-For full documentation, visit [laravel-zero.com](https://laravel-zero.com/).
+```bash
+composer global require danielebarbaro/apiswookery
+```
 
-## Support the development
-**Do you like this project? Support it by donating**
+## Usage 🚀
+To brew a mock server from your OpenAPI specification, simply run the following command:
 
-- PayPal: [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L)
-- Patreon: [Donate](https://www.patreon.com/nunomaduro)
+```bash
+php apiswookery brew {spec} [options]
+```
 
-## License
+replace `{spec}` with the path to your OpenAPI specification file (YAML or JSON).
 
-Laravel Zero is an open-source software licensed under the MIT license.
+### Options
+
+`--port`: Port number for the mock server (default: 9501)  
+`--host`: Host for the mock server (default: 127.0.0.1)  
+`--workers`: Number of worker processes (default: 4)  
+`--output`: Output file for the generated server (default: openswoole-server.php)  
+`--enable-logging`: Enable logging middleware  
+
+## Examples 📚
+Generate a mock server from an OpenAPI specification:
+
+```bash
+php apiswookery brew openapi.yaml
+```
+Enable CORS and metrics middleware:
+
+```bash
+php apiswookery brew openapi.yaml --enable-logging
+```
+
+## Testing 🧪
+ApiSwookery includes a comprehensive test suite to ensure its reliability. To run the tests, use the following command:
+
+```bash
+composer test
+```
+## Contributing 🤝
+Contributions are welcome! If you find a bug or have a feature request, please open an issue on the GitHub repository. If you'd like to contribute code, please fork the repository and submit a pull request.
+
+## License 📄
+ApiSwookery is open-sourced software licensed under the MIT license.
+
+## Credits 👨‍💻
+ApiSwookery is developed and maintained by Daniele Barbaro.
+
+## Support 💖
+If you find ApiSwookery helpful, please consider starring the repository on GitHub and sharing it with your colleagues and friends. Your support is greatly appreciated!
+
