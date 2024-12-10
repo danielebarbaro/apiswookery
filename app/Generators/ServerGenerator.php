@@ -17,7 +17,7 @@ use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
 use Nette\PhpGenerator\PsrPrinter;
 
-class ServerGenerator
+class ServerGenerator implements ServerGeneratorInterface
 {
     public function __construct(
         private readonly ApiSwookeryConfig $config,
@@ -64,7 +64,7 @@ echo "  - [GET] | /health\n\n";
 PHP;
     }
 
-    private function generateEndpointsList(OpenApi $spec): string
+    public function generateEndpointsList(OpenApi $spec): string
     {
         $endpointsList = '';
 
@@ -332,7 +332,7 @@ if (!isset($this->routes[$method])) {
 }
 
 foreach ($this->routes[$method] as $routePattern => $handler) {
-    if (preg_match('/^' . $routePattern . '$/', $path, $matches)) {
+    if (preg_match('#^' . $routePattern . '$#', $path, $matches)) {
         array_shift($matches);
         return [$handler, $matches];
     }
