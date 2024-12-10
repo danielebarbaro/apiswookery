@@ -4,6 +4,8 @@ namespace App\Commands;
 
 use App\Config\ApiSwookeryConfig;
 use App\Config\ServerConfig;
+use App\enums\LogLevel;
+use App\enums\LogRotation;
 use App\Generators\MockDataGenerator;
 use App\Generators\ServerGenerator;
 use App\OpenApi\SpecificationReader;
@@ -20,6 +22,10 @@ class BrewCommand extends Command
         {--port=9501 : Which port to enchant}
         {--host=127.0.0.1 : Which realm to bind to}
         {--workers=4 : Number of worker processes}
+        {--demonize=false : Enable demonize mode}
+        {--reload=false : Enable asynchronous reloading}
+        {--logLevel=NONE : Set log level}
+        {--logRotation=ROTATION_DAILY : Set log rotation}
         {--output=openswoole-server.php : Output file for the generated server}';
 
     protected $description = '🧙‍♂️ Brew a magical mock server from your OpenAPI specification';
@@ -29,6 +35,25 @@ class BrewCommand extends Command
         $this->line('🧙‍♂️ Starting the magical brewing process...');
         $this->newLine();
 
+        $logLevel = $this->option('logLevel');
+        $logRotation = $this->option('logRotation');
+
+        if (! LogLevel::isValidKey($logLevel)) {
+            $this->error("Invalid log level: $logLevel. Allowed values are: ".LogLevel::getCases());
+
+            return self::FAILURE;
+        }
+
+        $level = LogLevel::fromKey($logLevel);
+
+        if (! LogRotation::isValidKey($logRotation)) {
+            $this->error("Invalid log rotation: $logRotation. Allowed values are: ".LogRotation::getCases());
+
+            return self::FAILURE;
+        }
+
+        $rotation = LogRotation::fromKey($logRotation);
+
         try {
             // Load configuration
             $config = $this->loadConfig();
@@ -37,7 +62,11 @@ class BrewCommand extends Command
             $config->server = new ServerConfig(
                 host: $this->option('host'),
                 port: (int) $this->option('port'),
-                workers: (int) $this->option('workers')
+                workers: (int) $this->option('workers'),
+                demonize: (bool) $this->option('demonize'),
+                reload: (bool) $this->option('reload'),
+                logLevel: (int) $level->value,
+                logRotation: (int) $rotation->value,
             );
 
             // Initialize components
@@ -68,8 +97,8 @@ class BrewCommand extends Command
                 [
                     ['Server', $config->server->host.':'.$config->server->port],
                     ['Workers', $config->server->workers],
-                    ['Demonize', $config->server->demonize ? 'TRUE' : 'FALSE'],
-                    ['Reload', $config->server->reload ? 'TRUE' : 'FALSE'],
+                    ['Demonize', $config->server->demonize === true ? 'TRUE' : 'FALSE'],
+                    ['Reload', $config->server->reload === true ? 'TRUE' : 'FALSE'],
                     ['Log Level', $config->server->logLevel],
                     ['Log Rotation', $config->server->logRotation],
                     ['Output', $outputPath],
