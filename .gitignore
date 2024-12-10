@@ -2,6 +2,7 @@
 /.idea
 /.vscode
 /.vagrant
+/.coverage
 .phpunit.result.cache
 .php-cs-fixer.cache
 phpunit.xml

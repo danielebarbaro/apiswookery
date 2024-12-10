@@ -17,12 +17,11 @@ readonly class SpecificationReader
 
     public function read(string $path): OpenApi
     {
+        $absolutePath = dirname(__DIR__, 2).DIRECTORY_SEPARATOR.$path;
+
         if (! File::exists($path)) {
             throw new RuntimeException("OpenAPI specification file not found: {$path}");
         }
-
-        // $content = File::get($path);
-        $absolutePath = dirname(__DIR__, 2).DIRECTORY_SEPARATOR.$path;
 
         // ALL: resolve all references, which will result in a large description with a lot of repetitions
         // but no references (except if there are recursive references, these will stop at some level)

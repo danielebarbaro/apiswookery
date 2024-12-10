@@ -102,7 +102,7 @@ class ValidateCommand extends Command
         }
 
         $this->newLine();
-        $this->line('🛣️  Available Paths:');
+        $this->line('🛣️  OpenAPI Available Paths:');
 
         foreach ($openapi->paths as $path => $pathItem) {
             $methods = array_filter(
