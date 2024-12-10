@@ -394,4 +394,9 @@ $this->server->start();'
             $handler
         ));
     }
+
+    public function generateServerConfig(): string
+    {
+        // TODO: Implement generateServerConfig() method.
+    }
 }

@@ -8,6 +8,7 @@ use App\enums\LogLevel;
 use App\enums\LogRotation;
 use App\Generators\MockDataGenerator;
 use App\Generators\ServerGenerator;
+use App\Generators\StubServerGenerator;
 use App\OpenApi\SpecificationReader;
 use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
@@ -72,7 +73,8 @@ class BrewCommand extends Command
             // Initialize components
             $reader = new SpecificationReader($config);
             $mockGenerator = new MockDataGenerator($config);
-            $serverGenerator = new ServerGenerator($config, $mockGenerator);
+            // TODO: Review the class format -> $serverGenerator = new StubServerGenerator($config, $mockGenerator);
+            $serverGenerator = new StubServerGenerator($config, $mockGenerator);
 
             // Read and validate specification
             $this->info('📖 Reading your magical scroll...');
