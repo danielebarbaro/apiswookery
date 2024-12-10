@@ -10,6 +10,7 @@ use App\OpenApi\SpecificationReader;
 use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
 use RuntimeException;
+use Symfony\Component\Process\Process;
 
 class BrewCommand extends Command
 {
@@ -78,6 +79,7 @@ class BrewCommand extends Command
             $this->newLine();
             $this->line('To start your server, run:');
             $this->line("php {$outputPath}");
+            $this->lintOutput($outputPath);
 
             return self::SUCCESS;
         } catch (RuntimeException $e) {
@@ -106,5 +108,26 @@ class BrewCommand extends Command
         $this->info('📚 Using default configuration');
 
         return ApiSwookeryConfig::defaults();
+    }
+
+    private function lintOutput(string $outputPath): void
+    {
+        $pintPath = base_path('vendor/bin/pint');
+
+        if (! file_exists($pintPath)) {
+            $this->error('Laravel Pint is not installed. Run "composer require laravel/pint".');
+
+            return;
+        }
+
+        $process = new Process([$pintPath, '-q', '-n', $outputPath]);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            $this->error($process->getErrorOutput());
+
+            return;
+        }
+
     }
 }
