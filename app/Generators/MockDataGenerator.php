@@ -88,7 +88,7 @@ class MockDataGenerator
         }
 
         $minItems = $schema instanceof Schema ? $schema->minItems ?? 1 : $schema['minItems'] ?? 1;
-        $maxItems = $schema instanceof Schema ? $schema->maxItems ?? 5 : $schema['maxItems'] ?? 5;
+        $maxItems = $schema instanceof Schema ? $schema->maxItems ?? 3 : $schema['maxItems'] ?? 3;
         $count = $this->faker->numberBetween($minItems, $maxItems);
 
         return array_map(fn () => $this->generate($items), range(1, $count));
@@ -108,25 +108,28 @@ class MockDataGenerator
             'date' => $this->faker->date(),
             'email' => $this->faker->email(),
             'uri' => $this->faker->url(),
+            'uuid' => $this->faker->uuid(),
+            'password' => $this->faker->password(),
+            'byte' => base64_encode($this->faker->word()),
             'hostname' => $this->faker->domainName(),
             'ipv4' => $this->faker->ipv4(),
             'ipv6' => $this->faker->ipv6(),
-            default => $this->faker->sentence(),
+            default => $this->faker->words(3, true),
         };
     }
 
     private function generateInteger(array|Schema $schema): int
     {
-        $minimum = $schema instanceof Schema ? $schema->minimum ?? PHP_INT_MIN : $schema['minimum'] ?? PHP_INT_MIN;
-        $maximum = $schema instanceof Schema ? $schema->maximum ?? PHP_INT_MAX : $schema['maximum'] ?? PHP_INT_MAX;
+        $minimum = $schema instanceof Schema ? $schema->minimum ?? 1 : $schema['minimum'] ?? 1;
+        $maximum = $schema instanceof Schema ? $schema->maximum ?? 99999 : $schema['maximum'] ?? 99999;
 
         return $this->faker->numberBetween((int) $minimum, (int) $maximum);
     }
 
     private function generateNumber(array|Schema $schema): float
     {
-        $minimum = $schema instanceof Schema ? $schema->minimum ?? PHP_FLOAT_MIN : $schema['minimum'] ?? PHP_FLOAT_MIN;
-        $maximum = $schema instanceof Schema ? $schema->maximum ?? PHP_FLOAT_MAX : $schema['maximum'] ?? PHP_FLOAT_MAX;
+        $minimum = $schema instanceof Schema ? $schema->minimum ?? 1.0 : $schema['minimum'] ?? 1.0;
+        $maximum = $schema instanceof Schema ? $schema->maximum ?? 99999.99 : $schema['maximum'] ?? 99999.99;
 
         return $this->faker->randomFloat(2, (float) $minimum, (float) $maximum);
     }
