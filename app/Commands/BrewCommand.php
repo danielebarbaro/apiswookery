@@ -53,7 +53,7 @@ class BrewCommand extends Command
             }
 
             // Generate server code
-            $this->info('🪄 Brewing your mock server...');
+            $this->info('🪄  Brewing your mock server...');
             $serverCode = $serverGenerator->generate($spec);
 
             // Write to file
@@ -66,9 +66,11 @@ class BrewCommand extends Command
                 ['Property', 'Value'],
                 [
                     ['Server', $config->server->host.':'.$config->server->port],
-                    //                    ['Host', $config->server->host],
-                    //                    ['Port', $config->server->port],
                     ['Workers', $config->server->workers],
+                    ['Demonize', $config->server->demonize ? 'TRUE' : 'FALSE'],
+                    ['Reload', $config->server->reload ? 'TRUE' : 'FALSE'],
+                    ['Log Level', $config->server->logLevel],
+                    ['Log Rotation', $config->server->logRotation],
                     ['Output', $outputPath],
                 ]
             );
