@@ -1,55 +1,133 @@
 <?php
 
 use App\Config\ApiSwookeryConfig;
+use App\Config\OpenApiConfig;
 use App\OpenApi\SpecificationReader;
+use cebe\openapi\spec\OpenApi;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 beforeEach(function () {
     $this->fixturesPath = 'tests/Fixtures';
+    $this->config = ApiSwookeryConfig::defaults();
+    $this->reader = new SpecificationReader($this->config);
 });
 
-it('reads valid yaml specification', function () {
-    $config = ApiSwookeryConfig::defaults();
-    $reader = new SpecificationReader($config);
+describe('read method', function () {
+    it('reads valid yaml specification', function () {
+        $spec = $this->reader->read("{$this->fixturesPath}/valid-petstore.yaml");
 
-    $spec = $reader->read("{$this->fixturesPath}/valid-petstore.yaml");
+        expect($spec)
+            ->toBeInstanceOf(OpenApi::class)
+            ->and($spec->paths->getPaths())->toHaveKey('/pet')
+            ->and($spec->openapi)->toBe('3.0.2')
+            ->and($spec->info->title)->toBe('Test Pet Store')
+            ->and($spec->info->version)->toBe('1.0.0');
 
-    expect($spec)->toBeInstanceOf(\cebe\openapi\spec\OpenApi::class)
-        ->and($spec->paths->getPaths())->toHaveKey('/pet')
-        ->and($spec->openapi)->toBe('3.0.2');
+        $petPath = $spec->paths->getPath('/pet');
+        expect($petPath->post)->not->toBeNull()
+            ->and($petPath->post->summary)->toBe('Add a pet')
+            ->and($petPath->post->responses['200']->description)->toBe('OK')
+            ->and($petPath->put->summary)->toBe('Update a pet')
+            ->and($petPath->put->responses['200']->description)->toBe('OK');
+
+        $petSchema = $spec->components->schemas['Pet'];
+        expect($petSchema->type)->toBe('object')
+            ->and($petSchema->properties)->toHaveKey('id')
+            ->and($petSchema->properties)->toHaveKey('name')
+            ->and($petSchema->properties['id']->type)->toBe('integer')
+            ->and($petSchema->properties['name']->type)->toBe('string');
+    });
+
+    it('reads valid json specification', function () {
+        $spec = $this->reader->read("{$this->fixturesPath}/valid-petstore.json");
+
+        expect($spec)
+            ->toBeInstanceOf(OpenApi::class)
+            ->and($spec->paths->getPaths())->toHaveKey('/pet')
+            ->and($spec->openapi)->toBe('3.0.2')
+            ->and($spec->info->title)->toBe('Test Pet Store')
+            ->and($spec->info->version)->toBe('1.0.0');
+    });
+
+    it('reads yaml specification with yml extension', function () {
+        copy(
+            "{$this->fixturesPath}/valid-petstore.yaml",
+            "{$this->fixturesPath}/temp-petstore.yml"
+        );
+
+        $spec = $this->reader->read("{$this->fixturesPath}/temp-petstore.yml");
+
+        expect($spec)
+            ->toBeInstanceOf(OpenApi::class)
+            ->and($spec->paths->getPaths())->toHaveKey('/pet');
+
+        unlink("{$this->fixturesPath}/temp-petstore.yml");
+    });
 });
 
-it('reads valid json specification', function () {
-    $config = ApiSwookeryConfig::defaults();
-    $reader = new SpecificationReader($config);
+describe('validate method', function () {
+    it('validates specification version', function () {
+        $spec = $this->reader->read("{$this->fixturesPath}/valid-petstore.yaml");
+        expect($this->reader->validate($spec))->toBeTrue();
+    });
 
-    $spec = $reader->read("{$this->fixturesPath}/valid-petstore.json");
+    it('fails for unsupported OpenAPI version', function () {
+        $config = new ApiSwookeryConfig(
+            new OpenApiConfig('3.1.0'),
+            $this->config->server,
+            $this->config->middleware,
+            $this->config->mocking
+        );
 
-    expect($spec)->toBeInstanceOf(\cebe\openapi\spec\OpenApi::class)
-        ->and($spec->paths->getPaths())->toHaveKey('/pet')
-        ->and($spec->openapi)->toBe('3.0.2');
+        $reader = new SpecificationReader($config);
+        $spec = $reader->read("{$this->fixturesPath}/valid-petstore.yaml");
+
+        expect(fn () => $reader->validate($spec))
+            ->toThrow(
+                RuntimeException::class,
+                'OpenAPI version 3.0.2 is not supported. Minimum required version is 3.1.0'
+            );
+    });
+
+    it('fails for invalid OpenAPI specification', function () {
+        $invalidSpec = new OpenApi([
+            'openapi' => '3.0.2',
+            'paths' => [],
+        ]);
+
+        expect(fn () => $this->reader->validate($invalidSpec))
+            ->toThrow(RuntimeException::class)
+            ->and(fn () => $this->reader->validate($invalidSpec))
+            ->toThrow(RuntimeException::class, 'Invalid OpenAPI specification');
+    });
 });
 
-it('fails for unsupported file format', function () {
-    $config = ApiSwookeryConfig::defaults();
-    $reader = new SpecificationReader($config);
+describe('error handling', function () {
+    it('fails when file does not exist', function () {
+        expect(fn () => $this->reader->read("{$this->fixturesPath}/non-existent.yaml"))
+            ->toThrow(RuntimeException::class, 'OpenAPI specification file not found');
+    });
 
-    expect(fn () => $reader->read("{$this->fixturesPath}/invalid.txt"))
-        ->toThrow(RuntimeException::class, 'Unsupported specification format. Use YAML or JSON.');
-});
+    it('fails for unsupported file format', function () {
+        file_put_contents("{$this->fixturesPath}/temp.txt", 'invalid content');
 
-it('fails for unsupported file', function () {
-    $config = ApiSwookeryConfig::defaults();
-    $reader = new SpecificationReader($config);
+        expect(fn () => $this->reader->read("{$this->fixturesPath}/temp.txt"))
+            ->toThrow(RuntimeException::class, 'Unsupported specification format. Use YAML or JSON.');
 
-    expect(fn () => $reader->read("{$this->fixturesPath}/invalid-yaml.yaml"))
-        ->toThrow(ParseException::class);
-});
+        unlink("{$this->fixturesPath}/temp.txt");
+    });
 
-it('validates specification version', function () {
-    $config = ApiSwookeryConfig::defaults();
-    $reader = new SpecificationReader($config);
-    $spec = $reader->read("{$this->fixturesPath}/valid-petstore.yaml");
+    it('fails for invalid yaml content', function () {
+        expect(fn () => $this->reader->read("{$this->fixturesPath}/invalid-yaml.yaml"))
+            ->toThrow(ParseException::class);
+    });
 
-    expect($reader->validate($spec))->toBeTrue();
+    it('handles file system errors gracefully', function () {
+        mkdir("{$this->fixturesPath}/invalid-path");
+
+        expect(fn () => $this->reader->read("{$this->fixturesPath}/invalid-path"))
+            ->toThrow(RuntimeException::class);
+
+        rmdir("{$this->fixturesPath}/invalid-path");
+    });
 });

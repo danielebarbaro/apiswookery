@@ -12,7 +12,7 @@ beforeEach(function () {
 it('generates data from schema with example', function () {
     $schema = new Schema([
         'type' => 'string',
-        'example' => 'test-example'
+        'example' => 'test-example',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -23,7 +23,7 @@ it('generates data from schema with example', function () {
 it('generates data from array with example', function () {
     $schema = [
         'type' => 'string',
-        'example' => 'test-example'
+        'example' => 'test-example',
     ];
 
     $result = $this->generator->generate($schema);
@@ -37,9 +37,9 @@ it('generates object data', function () {
         'properties' => [
             'name' => ['type' => 'string'],
             'age' => ['type' => 'integer'],
-            'email' => ['type' => 'string', 'format' => 'email']
+            'email' => ['type' => 'string', 'format' => 'email'],
         ],
-        'required' => ['name', 'email']
+        'required' => ['name', 'email'],
     ]);
 
     $result = $this->generator->generate($schema);
@@ -56,10 +56,10 @@ it('generates array data', function () {
     $schema = new Schema([
         'type' => 'array',
         'items' => [
-            'type' => 'string'
+            'type' => 'string',
         ],
         'minItems' => 2,
-        'maxItems' => 4
+        'maxItems' => 4,
     ]);
 
     $result = $this->generator->generate($schema);
@@ -72,7 +72,7 @@ it('generates array data', function () {
 it('generates valid date-time string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'date-time'
+        'format' => 'date-time',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -82,7 +82,7 @@ it('generates valid date-time string', function () {
 it('generates valid date string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'date'
+        'format' => 'date',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -92,7 +92,7 @@ it('generates valid date string', function () {
 it('generates valid email string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'email'
+        'format' => 'email',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -102,7 +102,7 @@ it('generates valid email string', function () {
 it('generates valid uri string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'uri'
+        'format' => 'uri',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -112,7 +112,7 @@ it('generates valid uri string', function () {
 it('generates valid uuid string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'uuid'
+        'format' => 'uuid',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -122,7 +122,7 @@ it('generates valid uuid string', function () {
 it('generates valid hostname string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'hostname'
+        'format' => 'hostname',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -132,7 +132,7 @@ it('generates valid hostname string', function () {
 it('generates valid ipv4 string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'ipv4'
+        'format' => 'ipv4',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -142,7 +142,7 @@ it('generates valid ipv4 string', function () {
 it('generates valid ipv6 string', function () {
     $schema = new Schema([
         'type' => 'string',
-        'format' => 'ipv6'
+        'format' => 'ipv6',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -152,7 +152,7 @@ it('generates valid ipv6 string', function () {
 it('generates string from enum', function () {
     $schema = new Schema([
         'type' => 'string',
-        'enum' => ['one', 'two', 'three']
+        'enum' => ['one', 'two', 'three'],
     ]);
 
     $result = $this->generator->generate($schema);
@@ -164,7 +164,7 @@ it('generates integer within bounds', function () {
     $schema = new Schema([
         'type' => 'integer',
         'minimum' => 10,
-        'maximum' => 20
+        'maximum' => 20,
     ]);
 
     $result = $this->generator->generate($schema);
@@ -179,7 +179,7 @@ it('generates number within bounds', function () {
     $schema = new Schema([
         'type' => 'number',
         'minimum' => 10.5,
-        'maximum' => 20.5
+        'maximum' => 20.5,
     ]);
 
     $result = $this->generator->generate($schema);
@@ -192,7 +192,7 @@ it('generates number within bounds', function () {
 
 it('generates boolean values', function () {
     $schema = new Schema([
-        'type' => 'boolean'
+        'type' => 'boolean',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -215,12 +215,12 @@ it('generates nested objects', function () {
                         'required' => ['street', 'city'],
                         'properties' => [
                             'street' => ['type' => 'string'],
-                            'city' => ['type' => 'string']
-                        ]
-                    ]
-                ]
-            ]
-        ]
+                            'city' => ['type' => 'string'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     $result = $this->generator->generate($schema);
@@ -243,11 +243,11 @@ it('generates array of objects', function () {
             'required' => ['id', 'name'],
             'properties' => [
                 'id' => ['type' => 'integer'],
-                'name' => ['type' => 'string']
-            ]
+                'name' => ['type' => 'string'],
+            ],
         ],
         'minItems' => 2,
-        'maxItems' => 3
+        'maxItems' => 3,
     ]);
 
     $result = $this->generator->generate($schema);
@@ -260,7 +260,7 @@ it('generates array of objects', function () {
 
 it('returns empty array for object without properties', function () {
     $schema = new Schema([
-        'type' => 'object'
+        'type' => 'object',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -270,7 +270,7 @@ it('returns empty array for object without properties', function () {
 
 it('returns empty array for array without items', function () {
     $schema = new Schema([
-        'type' => 'array'
+        'type' => 'array',
     ]);
 
     $result = $this->generator->generate($schema);
@@ -280,7 +280,7 @@ it('returns empty array for array without items', function () {
 
 it('returns null for unknown type', function () {
     $schema = new Schema([
-        'type' => 'unknown'
+        'type' => 'unknown',
     ]);
 
     $result = $this->generator->generate($schema);

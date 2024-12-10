@@ -11,8 +11,4 @@ interface ServerGeneratorInterface
     public function generateServerConfig(): string;
 
     public function generateEndpointsList(OpenApi $spec): string;
-
-    public function getLogLevel(string $level): int;
-
-    public function getLogRotation(string $rotation): int;
 }

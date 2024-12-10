@@ -4,7 +4,7 @@ namespace Tests\Unit\Config;
 
 use App\Config\LoggingConfig;
 
-test('LoggingConfig has correct defaults', function () {
+it('LoggingConfig has correct defaults', function () {
     $config = new LoggingConfig;
 
     expect($config->enabled)->toBeFalse()
@@ -12,7 +12,7 @@ test('LoggingConfig has correct defaults', function () {
         ->and($config->logBody)->toBeTrue();
 });
 
-test('LoggingConfig can be created from array', function () {
+it('LoggingConfig can be created from array', function () {
     $config = LoggingConfig::fromArray([
         'enabled' => true,
         'exclude_paths' => ['/test'],

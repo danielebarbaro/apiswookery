@@ -4,7 +4,7 @@ namespace Tests\Unit\Config;
 
 use App\Config\MockingConfig;
 
-test('MockingConfig has correct defaults', function () {
+it('MockingConfig has correct defaults', function () {
     $config = new MockingConfig;
 
     expect($config->defaults)->toBe([
@@ -19,7 +19,7 @@ test('MockingConfig has correct defaults', function () {
         ->and($config->supportedFormats)->toBe(['json']);
 });
 
-test('MockingConfig can be created from array', function () {
+it('MockingConfig can be created from array', function () {
     $config = MockingConfig::fromArray([
         'defaults' => ['string' => 'test'],
         'generation_priority' => ['schema'],
