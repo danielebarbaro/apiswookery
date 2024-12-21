@@ -57,7 +57,7 @@ composer test
 Contributions are welcome! If you find a bug or have a feature request, please open an issue on the GitHub repository. If you'd like to contribute code, please fork the repository and submit a pull request.
 
 ## License 📄
-ApiSwookery is open-sourced software licensed under the MIT license.
+ApiSwookery is open-sourced and it is licensed under the Apache License 2.0. See the [LICENSE](./LICENSE) file for details.
 
 ## Credits 👨‍💻
 ApiSwookery is developed and maintained by Daniele Barbaro.
